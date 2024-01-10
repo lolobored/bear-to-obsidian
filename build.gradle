@@ -1,0 +1,23 @@
+plugins {
+    id 'org.springframework.boot' version '2.3.5.RELEASE'
+    id "io.franzbecker.gradle-lombok" version "5.0.0"
+    id 'java'
+}
+
+group 'org.lolobored'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    implementation 'commons-io:commons-io:2.15.1'
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
+    implementation 'org.xerial:sqlite-jdbc:3.44.1.0'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter', version: '2.7.0'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc:2.7.0'
+    implementation 'org.commonmark:commonmark:0.21.0'
+
+}
