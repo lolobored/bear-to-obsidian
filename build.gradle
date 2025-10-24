@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '2.3.5.RELEASE'
+    id 'org.springframework.boot' version "4.0.0-M3"
     id "io.franzbecker.gradle-lombok" version "5.0.0"
     id 'java'
 }
@@ -12,12 +12,12 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'org.projectlombok:lombok:1.18.30'
-    implementation 'commons-io:commons-io:2.15.1'
-    implementation 'org.apache.commons:commons-lang3:3.14.0'
-    implementation 'org.xerial:sqlite-jdbc:3.44.1.0'
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter', version: '2.7.0'
-    implementation 'org.springframework.boot:spring-boot-starter-jdbc:2.7.0'
-    implementation 'org.commonmark:commonmark:0.21.0'
+    annotationProcessor 'org.projectlombok:lombok:1.18.42'
+    implementation 'commons-io:commons-io:2.20.0'
+    implementation 'org.apache.commons:commons-lang3:3.19.0'
+    implementation 'org.xerial:sqlite-jdbc:3.50.3.0'
+    implementation 'org.springframework.boot:spring-boot-starter-web:4.0.0-M3'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc:4.0.0-M3'
+    implementation 'org.commonmark:commonmark:0.27.0'
 
 }
