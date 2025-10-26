@@ -11,6 +11,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,6 +81,13 @@ public class Exporter implements ApplicationRunner {
     }
 
     private void export(String bearFolder, String outputFolder) throws IOException {
+        // reinit JDBC connection dynamically
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("org.sqlite.JDBC");
+        dataSource.setUrl("jdbc:sqlite:"+bearFolder+"/Application Data/database.sqlite");
+
+        jdbcTemplate.setDataSource(dataSource);
+
         FileUtils.forceMkdir(new File(outputFolder));
         for (File file : new File(outputFolder).listFiles()) {
             if (!".obsidian".equalsIgnoreCase(file.getName())){
