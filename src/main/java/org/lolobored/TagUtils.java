@@ -2,9 +2,6 @@ package org.lolobored;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.commonmark.node.Node;
-import org.commonmark.parser.Parser;
-import org.lolobored.dao.Note;
 
 import java.io.File;
 import java.io.IOException;

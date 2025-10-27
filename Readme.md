@@ -3,8 +3,8 @@
 The primary goal of this project is to migrate notes from Bear (MacOS) to Obsidian (Any platform).
 It's mainly for my own usage as I'm using Obsidian at work (Windows Platform).
 
-As I'm preferring the layout of Bear and will keep Bear as my main note taking application, I'm literally creating files based on tags in Bear.
-A single note is then duplicated based on its tag definition.
+As I'm preferring the layout of Bear and will keep Bear as my main bearNote taking application, I'm literally creating files based on tags in Bear.
+A single bearNote is then duplicated based on its tag definition.
 
 Exportation of images and PDF is working and we get access to the files directly inside Obsidian. Images are going into an `attachments` folder and pdf into `attachments/pdf`
 
