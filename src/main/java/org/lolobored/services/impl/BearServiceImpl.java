@@ -1,18 +1,14 @@
 package org.lolobored.services.impl;
 
-import org.apache.commons.io.FileUtils;
 import org.lolobored.dao.bear.BearNote;
 import org.lolobored.dao.bear.BearNoteSQL;
 import org.lolobored.services.BearService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,19 +16,15 @@ import java.util.Map;
 @Service
 public class BearServiceImpl implements BearService {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
     @Override
     public Map<BigInteger, BearNote> exportBearNotes(String bearFolder) throws IOException {
         // reinit JDBC connection dynamically
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.sqlite.JDBC");
-        dataSource.setUrl("jdbc:sqlite:"+bearFolder+"/Application Data/database.sqlite");
+        DriverManagerDataSource dataSourceBear = new DriverManagerDataSource();
+        dataSourceBear.setDriverClassName("org.sqlite.JDBC");
+        dataSourceBear.setUrl("jdbc:sqlite:"+bearFolder+"/Application Data/database.sqlite");
+        JdbcTemplate jdbcTemplateBear= new JdbcTemplate(dataSourceBear);
 
-        jdbcTemplate.setDataSource(dataSource);
-
-        List<BearNoteSQL> notesSQL = jdbcTemplate.query("SELECT\n" +
+        List<BearNoteSQL> notesSQL = jdbcTemplateBear.query("SELECT\n" +
                         "      ZSFNOTE.Z_PK AS id,\n" +
                         "      ZSFNOTE.ZTITLE AS title,\n" +
                         "\t  ZSFNOTE.ZTEXT AS text,\n" +

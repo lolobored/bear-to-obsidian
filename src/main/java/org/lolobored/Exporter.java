@@ -39,7 +39,7 @@ public class Exporter implements ApplicationRunner {
 
         Map<BigInteger, BearNote> notesById = bearService.exportBearNotes(bearFolder);
         memosService.importNotes("http://localhost:5230",
-                "eyJhbGciOiJIUzI1NiIsImtpZCI6InYxIiwidHlwIjoiSldUIn0.eyJuYW1lIjoibGF1cmVudGxhYm9yZGUiLCJpc3MiOiJtZW1vcyIsInN1YiI6IjEiLCJhdWQiOlsidXNlci5hY2Nlc3MtdG9rZW4iXSwiaWF0IjoxNzYxNTIyNzA3fQ.2oBpt6Cmt2HQN7cbziwMRB6HBwS8WxxcDxWm4KdAF3M", notesById, bearFolder);
+                "eyJhbGciOiJIUzI1NiIsImtpZCI6InYxIiwidHlwIjoiSldUIn0.eyJuYW1lIjoibGF1cmVudGxhYm9yZGUiLCJpc3MiOiJtZW1vcyIsInN1YiI6IjEiLCJhdWQiOlsidXNlci5hY2Nlc3MtdG9rZW4iXSwiaWF0IjoxNzYxNTQyNzU0fQ.tePDGaV3-eqV8ta8_1JhOexUQSG9gTSZ2-A0gBnGJyQ", notesById, bearFolder);
     }
 
 
