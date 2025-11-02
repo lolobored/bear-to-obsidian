@@ -1,6 +1,7 @@
 plugins {
     id 'org.springframework.boot' version "4.0.0-RC1"
     id "io.franzbecker.gradle-lombok" version "5.0.0"
+    id "net.researchgate.release" version "3.1.0"
     id 'java'
 }
 
@@ -26,4 +27,25 @@ dependencies {
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.1'
     implementation 'org.liquibase:liquibase-core:5.0.1'
 
+}
+
+release {
+    afterReleaseBuild.dependsOn publish
+}
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/lolobored/bear-to-memos")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") ?: System.getenv("PASSWORD")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
+    }
 }
