@@ -2,6 +2,7 @@ plugins {
     id 'org.springframework.boot' version "4.0.0-RC1"
     id "io.franzbecker.gradle-lombok" version "5.0.0"
     id "net.researchgate.release" version "3.1.0"
+    id "maven-publish"
     id 'java'
 }
 
