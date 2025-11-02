@@ -1,4 +1,4 @@
-package org.lolobored.dao.bear;
+package org.lolobored.bear2memos.dao.bear;
 
 import lombok.Data;
 

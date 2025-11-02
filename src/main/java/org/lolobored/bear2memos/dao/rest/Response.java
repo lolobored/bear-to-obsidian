@@ -1,4 +1,4 @@
-package org.lolobored.dao.rest;
+package org.lolobored.bear2memos.dao.rest;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;

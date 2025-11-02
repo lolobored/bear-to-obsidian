@@ -1,5 +1,15 @@
+memos:
+  folders:
+    root: "/example/of/root/folder"
+    db: "${memos.folders.root}/sync-db/sync"
+  token: "example-of-token created in Memos"
+  url: "http://localhost:5230"
+
+bear:
+  folder: "${HOME}/Library/Group Containers/9K33E3U3T4.net.shinyfrog.bear"
+
 spring.datasource:
-  url: "jdbc:h2:file:${HOME}/.memos/sync"
+  url: "jdbc:h2:file:${memos.folders.db}"
   username: sync
   password: sync
   driver-class-name: "org.h2.Driver"
@@ -8,7 +18,7 @@ spring:
     hibernate:
       ddl-auto: none
   liquibase:
-    change-log: classpath:config/master.yaml
+    change-log: classpath:config/master.yml
   jackson:
     serialization:
       write-dates-as-timestamps: false

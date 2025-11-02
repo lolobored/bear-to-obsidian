@@ -1,12 +1,12 @@
-package org.lolobored.services.impl;
+package org.lolobored.bear2memos.services.impl;
 
 import org.apache.commons.io.FileUtils;
-import org.lolobored.dao.bear.BearAttachment;
-import org.lolobored.dao.bear.BearAttachmentSQL;
-import org.lolobored.dao.bear.BearNote;
-import org.lolobored.dao.bear.BearNoteSQL;
-import org.lolobored.repository.SyncRepository;
-import org.lolobored.services.BearService;
+import org.lolobored.bear2memos.dao.bear.BearAttachment;
+import org.lolobored.bear2memos.dao.bear.BearAttachmentSQL;
+import org.lolobored.bear2memos.dao.bear.BearNote;
+import org.lolobored.bear2memos.dao.bear.BearNoteSQL;
+import org.lolobored.bear2memos.repository.SyncRepository;
+import org.lolobored.bear2memos.services.BearService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -26,7 +26,7 @@ public class BearServiceImpl implements BearService {
     private SyncRepository syncRepository;
 
     @Override
-    public List<BearNote> retrieveBearNotes(String bearFolder) throws IOException {
+    public Map<BigInteger, BearNote> retrieveBearNotes(String bearFolder) throws IOException {
         // reinit JDBC connection dynamically
         DriverManagerDataSource dataSourceBear = new DriverManagerDataSource();
         dataSourceBear.setDriverClassName("org.sqlite.JDBC");
@@ -74,9 +74,7 @@ public class BearServiceImpl implements BearService {
             }
             notesById.put(bearNoteSQL.getId(), bearNote);
         }
-        List<BearNote> result= new ArrayList<>(notesById.values());
-        Collections.sort(result);
-        return result;
+        return notesById;
     }
 
     private BearAttachment buildBearAttachment(String bearFolder, BearAttachmentSQL bearAttachmentSQL) throws IOException {

@@ -1,30 +1,24 @@
-package org.lolobored.services.impl;
+package org.lolobored.bear2memos.services.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.lolobored.dao.bear.BearAttachment;
-import org.lolobored.dao.bear.BearAttachmentSQL;
-import org.lolobored.dao.bear.BearNote;
-import org.lolobored.dao.memos.MemosAttachment;
-import org.lolobored.dao.memos.MemosNote;
-import org.lolobored.dao.memos.workspace.MemosSettings;
-import org.lolobored.dao.rest.Response;
-import org.lolobored.services.MemosService;
+import org.lolobored.bear2memos.dao.bear.BearAttachment;
+import org.lolobored.bear2memos.dao.bear.BearNote;
+import org.lolobored.bear2memos.dao.memos.MemosAttachment;
+import org.lolobored.bear2memos.dao.memos.MemosList;
+import org.lolobored.bear2memos.dao.memos.MemosNote;
+import org.lolobored.bear2memos.dao.memos.workspace.MemosSettings;
+import org.lolobored.bear2memos.dao.rest.Response;
+import org.lolobored.bear2memos.services.MemosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.nio.file.Files;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -93,6 +87,32 @@ public class MemosServiceImpl implements MemosService {
         ResponseEntity<String> response = restTemplate.exchange(memosUrl + "/api/v1/workspace/settings/MEMO_RELATED", HttpMethod.PATCH, request, String.class, "workspace/settings/MEMO_RELATED");
     }
 
+    @Override
+    public List<MemosNote> listMemoNotes(String memosUrl, String memosToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(memosToken);
+        HttpEntity<MemosSettings> request= new HttpEntity<>(headers);
+        int pageSize=100;
+        List<MemosNote> result= new ArrayList<>();
+        boolean continuePaging=true;
+        String nextToken= null;
+
+        while (continuePaging){
+            String url= memosUrl + "/api/v1/memos?pageSize=" + pageSize;
+            if (nextToken!=null){
+                url+="&pageToken="+nextToken;
+            }
+            ResponseEntity<MemosList> response = restTemplate.exchange(url, HttpMethod.GET, request, MemosList.class);
+            nextToken = response.getBody().getNextPageToken();
+            if (nextToken.isEmpty()){
+                continuePaging=false;
+            }
+            result.addAll(response.getBody().getMemos());
+        }
+        return result;
+    }
+
 
     private MemosNote createOrUpdateMemosNote(String memosUrl, String memosToken, BearNote bearNote, String memosId) {
         HttpHeaders headers = new HttpHeaders();
@@ -111,7 +131,7 @@ public class MemosServiceImpl implements MemosService {
             response = restTemplate.exchange(memosUrl + "/api/v1/memos", HttpMethod.POST, request, Response.class);
             memosId = StringUtils.remove(response.getBody().getName(), "memos/");
         }
-        memosNote.setName(memosId);
+        memosNote.setName("memos/"+memosId);
         List<MemosAttachment> memosAttachments= new ArrayList<>();
         if (!bearNote.getBearAttachments().isEmpty()) {
             Map<String,String> attachmentsToReplace= new HashMap<>();
@@ -136,9 +156,6 @@ public class MemosServiceImpl implements MemosService {
 
         }
         request= new HttpEntity<>(memosNote, headers);
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         restTemplate.exchange(memosUrl + "/api/v1/memos/"+memosId, HttpMethod.PATCH, request, String.class, memosId);
         return memosNote;
     }

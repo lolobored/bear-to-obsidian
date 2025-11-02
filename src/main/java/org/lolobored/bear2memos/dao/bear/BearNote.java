@@ -1,10 +1,8 @@
-package org.lolobored.dao.bear;
+package org.lolobored.bear2memos.dao.bear;
 
 import lombok.Data;
 
 import java.math.BigInteger;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;

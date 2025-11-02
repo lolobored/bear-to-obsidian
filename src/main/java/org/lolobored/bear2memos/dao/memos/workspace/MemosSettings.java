@@ -1,4 +1,4 @@
-package org.lolobored.dao.memos.workspace;
+package org.lolobored.bear2memos.dao.memos.workspace;
 
 import lombok.Data;
 

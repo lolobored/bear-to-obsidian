@@ -1,4 +1,4 @@
-package org.lolobored.dao.sync;
+package org.lolobored.bear2memos.dao.sync;
 
 
 import jakarta.persistence.Column;

@@ -1,8 +1,8 @@
-package org.lolobored.dao.memos;
+package org.lolobored.bear2memos.dao.memos;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-import org.lolobored.dao.bear.BearAttachment;
+import org.lolobored.bear2memos.dao.bear.BearAttachment;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
