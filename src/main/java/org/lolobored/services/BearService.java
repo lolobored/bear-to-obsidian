@@ -1,12 +1,11 @@
 package org.lolobored.services;
 
 import org.lolobored.dao.bear.BearNote;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.math.BigInteger;
-import java.util.Map;
+import java.util.List;
+
 
 public interface BearService {
-    public Map<BigInteger, BearNote> exportBearNotes(String bearFolder) throws IOException;
+    List<BearNote> retrieveBearNotes(String bearFolder) throws IOException;
 }

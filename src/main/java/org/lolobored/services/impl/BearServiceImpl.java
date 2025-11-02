@@ -1,28 +1,37 @@
 package org.lolobored.services.impl;
 
+import org.apache.commons.io.FileUtils;
+import org.lolobored.dao.bear.BearAttachment;
+import org.lolobored.dao.bear.BearAttachmentSQL;
 import org.lolobored.dao.bear.BearNote;
 import org.lolobored.dao.bear.BearNoteSQL;
+import org.lolobored.repository.SyncRepository;
 import org.lolobored.services.BearService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.Files;
+import java.util.*;
 
 @Service
 public class BearServiceImpl implements BearService {
 
+    @Autowired
+    private SyncRepository syncRepository;
+
     @Override
-    public Map<BigInteger, BearNote> exportBearNotes(String bearFolder) throws IOException {
+    public List<BearNote> retrieveBearNotes(String bearFolder) throws IOException {
         // reinit JDBC connection dynamically
         DriverManagerDataSource dataSourceBear = new DriverManagerDataSource();
         dataSourceBear.setDriverClassName("org.sqlite.JDBC");
-        dataSourceBear.setUrl("jdbc:sqlite:"+bearFolder+"/Application Data/database.sqlite");
-        JdbcTemplate jdbcTemplateBear= new JdbcTemplate(dataSourceBear);
+        dataSourceBear.setUrl("jdbc:sqlite:" + bearFolder + "/Application Data/database.sqlite");
+        JdbcTemplate jdbcTemplateBear = new JdbcTemplate(dataSourceBear);
 
         List<BearNoteSQL> notesSQL = jdbcTemplateBear.query("SELECT\n" +
                         "      ZSFNOTE.Z_PK AS id,\n" +
@@ -48,11 +57,10 @@ public class BearServiceImpl implements BearService {
                         rs.getString("update_date")
                 ));
 
-        Map<BigInteger, BearNote> notesById= new HashMap<>();
+        Map<BigInteger, BearNote> notesById = new HashMap<>();
 
         // collect all the notes (note that notes can be appearing multiple times because of multiple tasgs
         for (BearNoteSQL bearNoteSQL : notesSQL) {
-            if (bearNoteSQL.isTrashed()) continue;
 
             BearNote bearNote = notesById.getOrDefault(bearNoteSQL.getId(), new BearNote());
             bearNote.setId(bearNoteSQL.getId());
@@ -60,12 +68,36 @@ public class BearServiceImpl implements BearService {
             bearNote.setTitle(bearNoteSQL.getTitle());
             bearNote.setCreationDate(bearNoteSQL.getCreationDate());
             bearNote.setUpdateDate(bearNoteSQL.getUpdateDate());
-            if (bearNoteSQL.getBearAttachment()!=null) {
-                bearNote.addAttachment(bearNoteSQL.getBearAttachment());
+            bearNote.setDeleted(bearNoteSQL.isTrashed());
+            if (bearNoteSQL.getBearAttachmentSQL() != null) {
+                bearNote.addAttachment(buildBearAttachment(bearFolder, bearNoteSQL.getBearAttachmentSQL()));
             }
             notesById.put(bearNoteSQL.getId(), bearNote);
         }
+        List<BearNote> result= new ArrayList<>(notesById.values());
+        Collections.sort(result);
+        return result;
+    }
 
-        return notesById;
+    private BearAttachment buildBearAttachment(String bearFolder, BearAttachmentSQL bearAttachmentSQL) throws IOException {
+        String attachmentImageFolder = "/Application Data/Local Files/Note Images";
+        String attachmentFileFolder = "/Application Data/Local Files/Note Files";
+        BearAttachment bearAttachment = new BearAttachment();
+        // determine where the file is
+        File attachmentFile = new File(bearFolder + attachmentImageFolder + "/" + bearAttachmentSQL.getFileFolderName() + "/" + bearAttachmentSQL.getFileName());
+        if (!attachmentFile.exists()) {
+            attachmentFile = new File(bearFolder + attachmentFileFolder + "/" + bearAttachmentSQL.getFileFolderName() + "/" + bearAttachmentSQL.getFileName());
+            if (!attachmentFile.exists()) {
+                throw new FileNotFoundException("File [" + bearAttachmentSQL.getFileFolderName() + "/" + bearAttachmentSQL.getFileName() + "] " +
+                        "was not found in [" + bearFolder + attachmentImageFolder + "/" + bearAttachmentSQL.getFileFolderName() + "/" + bearAttachmentSQL.getFileName() + "] " +
+                        "or [" + bearFolder + attachmentFileFolder + "/" + bearAttachmentSQL.getFileFolderName() + "/" + bearAttachmentSQL.getFileName() + "]");
+            }
+        }
+        // this.name="attachments/"+bearAttachment.getFileName();
+        bearAttachment.setType(Files.probeContentType(attachmentFile.toPath()));
+        bearAttachment.setFilename(bearAttachmentSQL.getFileName());
+        // read the file as bytes
+        bearAttachment.setContent(FileUtils.readFileToByteArray(attachmentFile));
+        return bearAttachment;
     }
 }

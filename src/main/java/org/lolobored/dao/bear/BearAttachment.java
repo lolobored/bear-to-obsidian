@@ -4,6 +4,8 @@ import lombok.Data;
 
 @Data
 public class BearAttachment {
-    private String fileFolderName;
-    private String fileName;
+    private String name;
+    private String filename;
+    private String type;
+    private byte[] content;
 }

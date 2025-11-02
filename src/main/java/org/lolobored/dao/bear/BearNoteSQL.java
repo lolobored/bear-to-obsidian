@@ -3,8 +3,7 @@ package org.lolobored.dao.bear;
 import lombok.Data;
 
 import java.math.BigInteger;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 
 @Data
@@ -13,9 +12,9 @@ public class BearNoteSQL {
     private String title;
     private String text;
     private boolean trashed;
-    private BearAttachment bearAttachment;
-    private LocalDateTime creationDate;
-    private LocalDateTime updateDate;
+    private BearAttachmentSQL bearAttachmentSQL;
+    private ZonedDateTime creationDate;
+    private ZonedDateTime updateDate;
 
     public BearNoteSQL(String id,
                        String title,
@@ -33,15 +32,13 @@ public class BearNoteSQL {
         this.text=text;
         this.trashed="1".equals(trashed);
         if (fileFolderName!=null && fileName!= null){
-            BearAttachment bearAttachment = new BearAttachment();
-            bearAttachment.setFileName(fileName);
-            bearAttachment.setFileFolderName(fileFolderName);
-            this.bearAttachment = bearAttachment;
+            BearAttachmentSQL bearAttachmentSQL = new BearAttachmentSQL();
+            bearAttachmentSQL.setFileName(fileName);
+            bearAttachmentSQL.setFileFolderName(fileFolderName);
+            this.bearAttachmentSQL = bearAttachmentSQL;
         }
-        this.creationDate= LocalDateTime.parse(creationDate, formatter);
-        this.creationDate.atOffset(ZoneOffset.UTC);
-        this.updateDate= LocalDateTime.parse(updateDate, formatter);
-        this.updateDate.atOffset(ZoneOffset.UTC);
+        this.creationDate= LocalDateTime.parse(creationDate, formatter).atZone(ZoneId.systemDefault());
+        this.updateDate= LocalDateTime.parse(updateDate, formatter).atZone(ZoneId.systemDefault());
     }
 }
 

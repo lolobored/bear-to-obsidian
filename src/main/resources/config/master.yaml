@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: "Laurent Laborde"
+      changes:
+        - createTable:
+            tableName: sync
+            columns:
+              - column:
+                  name: BEAR_ID
+                  type: numeric(38)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: DELETED
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: BEAR_CHECKSUM
+                  type: VARCHAR(255)
+              - column:
+                  name: MEMOS_CHECKSUM
+                  type: VARCHAR(255)
+              - column:
+                  name: MEMOS_ID
+                  type: VARCHAR(255)
+  - changeSet:
+      id: 2
+      author: "Laurent Laborde"
+      changes:
+        - addUniqueConstraint:
+            tableName: sync
+            columnNames: MEMOS_ID
+            constraintName: MEMOS_ID_CONSTRAINT
